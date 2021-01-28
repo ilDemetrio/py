@@ -1,0 +1,9 @@
+import pandas as pandemia
+import matplotlib.pyplot as plt
+rawData = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv'
+pandemia = pandemia.read_csv(rawData, parse_dates=['data'])
+#print(pandemia.info())
+ultimo_mese = pandemia.tail(30)
+ultimo_mese.plot('data','nuovi_positivi')
+ultimo_mese.plot('data','deceduti')
+plt.show()
