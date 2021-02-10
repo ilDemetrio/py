@@ -1,0 +1,32 @@
+import pandas as pandemia
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import r2_score
+def gompertz_model(x,a,b,c):
+    return c*np.exp(-b*np.exp(-x/a)) 
+
+rawData = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv'
+
+pandemia = pandemia.read_csv(rawData, parse_dates=['data'])
+maxPunti = pandemia['nuovi_positivi'].size
+estratto = pandemia.tail(maxPunti)
+
+x = np.linspace(1, maxPunti, maxPunti)
+y = estratto['nuovi_positivi']
+z = estratto['deceduti']
+
+dem_model = np.poly1d(np.polyfit(x, y, 17))
+
+plt.figure(figsize=(20,10))
+plt.scatter(x, y,label='nuovi positivi', marker=".")
+plt.plot(x, dem_model(x), label='proiezione',linewidth = 3, color="red")
+plt.plot(x, z, label='deceduti',linewidth = 3, linestyle=":")
+plt.plot(x, gompertz_model(x, 15, 14, 35000), c='b', label='Gompertz-1st wave')
+plt.plot(x, gompertz_model(x, 42, 500, 100000), c='g', label='Gompertz-2st wave')
+
+plt.xlabel("Giorni di pandemia")
+plt.ylabel("Numerosità")
+plt.title('Andamento Pandemia')
+plt.legend(loc='upper left')
+plt.show()
+print(r2_score(y, dem_model(x)))
